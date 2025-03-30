@@ -60,7 +60,7 @@
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         status.textContent = "✅ Imagen lista";
-        output.innerHTML = <img src="${url}" alt="Resultado" />`;
+        output.innerHTML = `<img src="${url}" alt="Resultado" />`;
       } catch (err) {
         status.textContent = "❌ Error de red o del servidor";
         console.error(err);
