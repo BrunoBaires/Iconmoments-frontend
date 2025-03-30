@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>IconMoments</title>
+  <title>IconMoments (Debug)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { font-family: sans-serif; padding: 2em; text-align: center; }
@@ -54,16 +54,33 @@
 
         if (!res.ok) {
           status.textContent = "❌ Error al procesar la imagen";
+          console.error("Error HTTP:", res.status);
           return;
         }
 
         const blob = await res.blob();
+        console.log("Tipo de blob recibido:", blob.type);
+
+        if (!blob || blob.size === 0) {
+          status.textContent = "❌ Imagen vacía o no válida";
+          return;
+        }
+
         const url = URL.createObjectURL(blob);
         status.textContent = "✅ Imagen lista";
-        output.innerHTML = `<img src="${url}" alt="Resultado" />`;
+
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = "Resultado";
+        img.onload = () => console.log("Imagen cargada correctamente");
+        img.onerror = () => console.error("❌ Error al mostrar la imagen");
+
+        output.innerHTML = "";
+        output.appendChild(img);
+
       } catch (err) {
         status.textContent = "❌ Error de red o del servidor";
-        console.error(err);
+        console.error("Error de ejecución:", err);
       } finally {
         button.disabled = false;
       }
