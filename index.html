@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>IconMoments</title>
@@ -9,6 +9,7 @@
     img { max-width: 100%; margin-top: 1em; }
     button { padding: 10px 20px; font-size: 16px; }
     select, input { padding: 8px; font-size: 16px; margin: 10px; }
+    #status { margin-top: 20px; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -20,31 +21,52 @@
     <option value="crayon">🖍️ Crayón</option>
     <option value="newyorker">✒️ The New Yorker</option>
   </select><br><br>
-  <button onclick="sendImage()">Convertir en dibujo</button>
+  <button onclick="sendImage()" id="convertBtn">Convertir en dibujo</button>
+  <div id="status"></div>
   <div id="output"></div>
+
   <script>
     async function sendImage() {
       const input = document.getElementById("imageInput");
       const style = document.getElementById("styleSelect").value;
-      if (!input.files[0]) return alert("Elegí una imagen primero");
+      const status = document.getElementById("status");
+      const output = document.getElementById("output");
+      const button = document.getElementById("convertBtn");
+
+      if (!input.files[0]) {
+        alert("Elegí una imagen primero");
+        return;
+      }
 
       const formData = new FormData();
       formData.append("image", input.files[0]);
       formData.append("style", style);
 
-      const res = await fetch("https://iconmoments2.onrender.com/convert", {
-        method: "POST",
-        body: formData
-      });
+      status.textContent = "⏳ Procesando imagen...";
+      button.disabled = true;
+      output.innerHTML = "";
 
-      if (!res.ok) {
-        alert("Error al procesar la imagen");
-        return;
+      try {
+        const res = await fetch("https://iconmoments2.onrender.com/convert", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!res.ok) {
+          status.textContent = "❌ Error al procesar la imagen";
+          return;
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        status.textContent = "✅ Imagen lista";
+        output.innerHTML = `<img src="\${url}" alt="Resultado">`;
+      } catch (err) {
+        status.textContent = "❌ Error de red o del servidor";
+        console.error(err);
+      } finally {
+        button.disabled = false;
       }
-
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      document.getElementById("output").innerHTML = `<img src="\${url}" alt="Resultado">`;
     }
   </script>
 </body>
