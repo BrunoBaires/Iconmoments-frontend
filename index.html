@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IconMoments</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; padding: 2em; text-align: center; }
+    img { max-width: 100%; margin-top: 1em; }
+    button { padding: 10px 20px; font-size: 16px; }
+    select, input { padding: 8px; font-size: 16px; margin: 10px; }
+  </style>
+</head>
+<body>
+  <h1>🖼️ IconMoments</h1>
+  <p>Subí una imagen y convertila en dibujo</p>
+  <input type="file" id="imageInput" accept="image/*"><br><br>
+  <select id="styleSelect">
+    <option value="tintin">🎩 Estilo Tintin</option>
+    <option value="crayon">🖍️ Crayón</option>
+    <option value="newyorker">✒️ The New Yorker</option>
+  </select><br><br>
+  <button onclick="sendImage()">Convertir en dibujo</button>
+  <div id="output"></div>
+  <script>
+    async function sendImage() {
+      const input = document.getElementById("imageInput");
+      const style = document.getElementById("styleSelect").value;
+      if (!input.files[0]) return alert("Elegí una imagen primero");
+
+      const formData = new FormData();
+      formData.append("image", input.files[0]);
+      formData.append("style", style);
+
+      const res = await fetch("https://iconmoments.onrender.com/convert", {
+        method: "POST",
+        body: formData
+      });
+
+      if (!res.ok) {
+        alert("Error al procesar la imagen");
+        return;
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      document.getElementById("output").innerHTML = `<img src="\${url}" alt="Resultado">`;
+    }
+  </script>
+</body>
+</html>
