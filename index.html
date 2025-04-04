@@ -14,7 +14,7 @@
 </head>
 <body>
   <h1>🖼️ IconMoments</h1>
-  <p>Subí una imagen y convertila en dibujo</p>
+  <p>Subí una imagen y convertíla en dibujo</p>
   <input type="file" id="imageInput" accept="image/*"><br><br>
   <select id="styleSelect">
     <option value="tintin">🎩 Estilo Tintin</option>
@@ -47,7 +47,7 @@
       output.innerHTML = "";
 
       try {
-        const res = await fetch("https://iconmoments2.onrender.com/convert", {
+        const res = await fetch("https://iconmoments-backend-1.onrender.com/convert", {
           method: "POST",
           body: formData
         });
